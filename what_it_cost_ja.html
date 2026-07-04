@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>今日、何を守ったか</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;600&family=Noto+Sans+JP:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg: #1B2430;
+  --panel: #232F3D;
+  --panel-alt: #2A3644;
+  --rule: #3A4656;
+  --text: #E8E4DC;
+  --muted: #8B95A3;
+  --amber: #C97B3F;
+  --amber-soft: #E3A868;
+  --sage: #7A9B76;
+}
+
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Sans JP',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:48px 24px 80px;
+}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  color:var(--amber-soft);
+  margin-bottom:14px;
+}
+h1{
+  font-family:'Noto Serif JP',serif;
+  font-weight:600;
+  font-size:clamp(24px,5.5vw,34px);
+  line-height:1.5;
+  margin:0 0 16px;
+  letter-spacing:0.01em;
+}
+.intro{
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.9;
+  margin:0 0 40px;
+  max-width:40em;
+}
+.intro b{ color:var(--text); font-weight:600; }
+
+.ledger{
+  background:var(--panel);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:28px 28px 24px;
+  margin-bottom:36px;
+}
+.ledger-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.05em;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.ledger-total{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(24px,6vw,32px);
+  font-weight:500;
+  color:var(--amber-soft);
+  letter-spacing:-0.01em;
+  word-break:break-all;
+}
+.ledger-total .unit{
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:14px;
+  color:var(--muted);
+  font-weight:400;
+  margin-left:8px;
+}
+.ledger-sub{
+  display:flex;
+  gap:28px;
+  margin-top:18px;
+  padding-top:18px;
+  border-top:1px dashed var(--rule);
+  flex-wrap:wrap;
+}
+.ledger-sub div{ font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--muted); }
+.ledger-sub span{ display:block; font-family:'Noto Sans JP',sans-serif; color:var(--text); font-size:16px; margin-top:2px; }
+
+h2{
+  font-family:'Noto Serif JP',serif;
+  font-weight:600;
+  font-size:18px;
+  margin:0 0 4px;
+}
+.section-note{
+  color:var(--muted);
+  font-size:13px;
+  margin:0 0 16px;
+}
+.category{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.05em;
+  color:var(--amber-soft);
+  margin:28px 0 10px;
+}
+.action{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  background:var(--panel);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:14px 16px;
+  margin-bottom:8px;
+  color:var(--text);
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:14px;
+  text-align:left;
+  cursor:pointer;
+  transition:border-color .15s ease, background .15s ease;
+}
+.action:hover{ border-color:var(--amber); background:var(--panel-alt); }
+.action:active{ transform:translateY(1px); }
+.action .kg{
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.log{
+  margin-top:40px;
+}
+.log-empty{
+  color:var(--muted);
+  font-size:13px;
+  font-style:italic;
+  padding:12px 0;
+}
+.log-entry{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  font-size:12.5px;
+  padding:9px 0;
+  border-bottom:1px dotted var(--rule);
+  color:var(--muted);
+}
+.log-entry .name{ color:var(--text); }
+.log-entry .val{ font-family:'IBM Plex Mono',monospace; white-space:nowrap; color:var(--sage); }
+
+.reset{
+  background:none;
+  border:1px solid var(--rule);
+  color:var(--muted);
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:12px;
+  padding:8px 14px;
+  border-radius:4px;
+  cursor:pointer;
+  margin-top:18px;
+}
+.reset:hover{ border-color:var(--amber); color:var(--amber-soft); }
+
+details{
+  margin-top:48px;
+  border-top:1px solid var(--rule);
+  padding-top:20px;
+}
+summary{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.02em;
+  color:var(--amber-soft);
+  cursor:pointer;
+}
+.method{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.9;
+  margin-top:14px;
+  max-width:42em;
+}
+.method p{ margin:0 0 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">日々の記録</div>
+  <h1>今日、何を失わせたか。何を守ったか。</h1>
+  <p class="intro">気候変動の話は、たいてい「気温が何度上がる」「海面が何センチ上がる」という数字で語られる。でも本当に大事なのは、それが<b>人</b>にどう影響するかだと思う。これは、CO₂の排出量と死亡者数の関係を示す、実際に発表された研究をもとに、行動を「何人の命に関わるか」に換算するツール。数字はとても小さい。それが正直な答え。</p>
+
+  <div class="ledger">
+    <div class="ledger-label">今日、推定で守った命</div>
+    <div class="ledger-total" id="totalLives">0<span class="unit">人（推定）</span></div>
+    <div class="ledger-sub">
+      <div>削減したCO₂<span id="totalKg">0 kg</span></div>
+      <div>記録した行動<span id="totalCount">0</span></div>
+    </div>
+  </div>
+
+  <h2>行動を記録する</h2>
+  <p class="section-note">今日やったことをクリックすると、下の集計に加算される。</p>
+
+  <div id="actions"></div>
+
+  <div class="log">
+    <h2>今日の記録</h2>
+    <div id="logList"><div class="log-empty">まだ記録がありません。</div></div>
+    <button class="reset" id="resetBtn">今日の記録をリセット</button>
+  </div>
+
+  <details>
+    <summary>この数字の計算方法</summary>
+    <div class="method">
+      <p>「命」の数値は、Bressler（2021年）の論文<i>「The mortality cost of carbon（炭素の死亡コスト）」</i>（Nature Communications誌）に基づいている。これは気候経済モデルDICEを拡張した査読済みの研究。その中心推定によれば、2020年に排出された約<b>4,434トンのCO₂</b>が、今世紀末までに気温上昇による超過死亡を1人増やすとされる（1トンあたり0.000226人）。</p>
+      <p>この数値は熱関連死のみを対象としており、気候変動の悪化によって増えるとされる飢饉・紛争・自然災害による死者は含まれていない。つまり実際の数はこれより大きい可能性が高い。</p>
+      <p>各行動のCO₂排出量は、公開されている一般的な排出量データに基づくおおよその目安であり、あなた個人の正確な排出量を測定したものではない。このツールは、正確な個人記録というより、規模を実感するために作られている。タブを閉じると記録は保存されない。</p>
+    </div>
+  </details>
+
+</div>
+
+<script>
+const DEATHS_PER_KG = 0.000226 / 1000; // 1トンあたり2.26×10⁻⁴人 → 1kgあたり
+
+const ACTIONS = [
+  { cat: "移動", label: "車での移動をやめた（約30km）", kg: 6.0 },
+  { cat: "移動", label: "車の代わりに自転車・徒歩にした（約10km）", kg: 2.0 },
+  { cat: "家庭のエネルギー", label: "乾燥機の代わりに自然乾燥にした", kg: 2.3 },
+  { cat: "家庭のエネルギー", label: "暖房・冷房を数時間止めた", kg: 1.5 },
+  { cat: "家庭のエネルギー", label: "待機電力をやめてコンセントを抜いた", kg: 0.3 },
+  { cat: "食事", label: "一日を完全に植物性の食事にした", kg: 3.6 },
+  { cat: "食事", label: "牛肉料理を1食、別のものに変えた", kg: 4.5 },
+  { cat: "大きな選択", label: "短距離のフライトを1回控えた（片道約500km）", kg: 150 },
+];
+
+let totalKg = 0;
+let log = [];
+
+function fmtLives(n){
+  if (n === 0) return "0";
+  const leadingZeros = Math.max(0, Math.ceil(-Math.log10(n)) - 1);
+  const decimals = Math.min(leadingZeros + 3, 20);
+  return n.toFixed(decimals);
+}
+
+function render(){
+  document.getElementById('totalKg').textContent = totalKg.toFixed(1) + " kg";
+  document.getElementById('totalCount').textContent = log.length;
+  const lives = totalKg * DEATHS_PER_KG;
+  document.getElementById('totalLives').innerHTML = fmtLives(lives) + '<span class="unit">人（推定）</span>';
+
+  const logEl = document.getElementById('logList');
+  if (log.length === 0) {
+    logEl.innerHTML = '<div class="log-empty">まだ記録がありません。</div>';
+  } else {
+    logEl.innerHTML = log.slice().reverse().map(e =>
+      `<div class="log-entry"><span class="name">${e.label}</span><span class="val">−${e.kg} kg ・ ${fmtLives(e.kg*DEATHS_PER_KG)} 人</span></div>`
+    ).join('');
+  }
+}
+
+function buildActions(){
+  const container = document.getElementById('actions');
+  const cats = [...new Set(ACTIONS.map(a=>a.cat))];
+  cats.forEach(cat=>{
+    const h = document.createElement('div');
+    h.className = 'category';
+    h.textContent = cat;
+    container.appendChild(h);
+    ACTIONS.filter(a=>a.cat===cat).forEach(a=>{
+      const btn = document.createElement('button');
+      btn.className = 'action';
+      btn.innerHTML = `<span>${a.label}</span><span class="kg">−${a.kg} kg CO₂</span>`;
+      btn.onclick = () => {
+        totalKg += a.kg;
+        log.push(a);
+        render();
+      };
+      container.appendChild(btn);
+    });
+  });
+}
+
+document.getElementById('resetBtn').onclick = () => {
+  totalKg = 0;
+  log = [];
+  render();
+};
+
+buildActions();
+render();
+</script>
+</body>
+</html>
